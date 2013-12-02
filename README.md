@@ -1,4 +1,4 @@
-# Hubot TraceView
+# Hubot Deploy
 
 Deploy wrapper script for Jenkins CI Hubot script
 
