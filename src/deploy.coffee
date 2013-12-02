@@ -8,7 +8,7 @@
 #   None
 #
 # Commands:
-#   hubot deploy <environment> <branch> - deploys the specified Tracelons branch to the specified environment
+#   hubot deploy <environment> <branch> - deploys the specified branch to the specified environment
 #
 # Author:
 #   danriti
