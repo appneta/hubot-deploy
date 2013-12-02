@@ -5,7 +5,9 @@
 #   None
 #
 # Configuration:
-#   None
+#   HUBOT_DEPLOY_ENV
+#
+#   ENV should be in JSON i.e. '{ "foo": "deploy-foo" }'
 #
 # Commands:
 #   hubot deploy <environment> <branch> - deploys the specified branch to the specified environment
@@ -16,8 +18,7 @@
 querystring = require 'querystring'
 
 jenkinsDeploy = (msg, robot) ->
-  ENV_TO_JOBS =
-    labs: 'deploy-labs'
+  ENV_TO_JOBS = JSON.parse process.env.HUBOT_DEPLOY_ENV
 
   if not robot.jenkins?.build?
     msg.send "Error: jenkins plugin not installed."
