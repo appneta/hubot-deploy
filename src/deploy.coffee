@@ -19,16 +19,16 @@ jenkinsDeploy = (msg, robot) ->
   ENV_TO_JOBS =
     labs: 'deploy-labs'
 
-  if not robot.jenkins and not robot.jenkins.build
+  if not robot.jenkins?.build?
     msg.send "Error: jenkins plugin not installed."
     return
 
   environment = querystring.escape msg.match[1]
   branch = querystring.escape msg.match[2]
 
-  if not environment in ENV_TO_JOBS
+  if environment not of ENV_TO_JOBS
     msg.send "Invalid environment: #{environment}"
-    msg.send "Valid choices are: #{(key for key of env2job)}"
+    msg.send "Valid environments are: #{(key for key of ENV_TO_JOBS)}"
     return
 
   job = ENV_TO_JOBS[environment]
