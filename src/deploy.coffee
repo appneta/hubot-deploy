@@ -7,7 +7,12 @@
 # Configuration:
 #   HUBOT_DEPLOY_CONFIG
 #
-#   CONFIG should be in JSON i.e. '{ "foo": {"job": "deploy-foo", "users": ["*"] } }'
+#   CONFIG should be in JSON i.e. '{ "foo": {"job": "deploy-foo", "role": "deploy" } }'
+#
+#   The "role" field uses the [auth.coffee][1] module for restricting access via user
+#   configurable roles. You can set "role" to "*" if you don't care about restricting access.
+#
+#   [1]: https://github.com/github/hubot-scripts/blob/master/src/scripts/auth.coffee
 #
 # Commands:
 #   hubot deploy <environment> <branch> - deploys the specified branch to the specified environment
@@ -19,6 +24,12 @@ querystring = require 'querystring'
 
 jenkinsDeploy = (msg, robot) ->
   CONFIG = JSON.parse process.env.HUBOT_DEPLOY_CONFIG
+
+  userHasRole = (user, role) ->
+    if role is "*"
+      return true
+
+    return robot.Auth.hasRole(user, role)
 
   if not robot.jenkins?.build?
     msg.send "Error: jenkins plugin not installed."
@@ -34,13 +45,13 @@ jenkinsDeploy = (msg, robot) ->
     return
 
   job = CONFIG[environment].job
-  users = CONFIG[environment].users
+  role = CONFIG[environment].role
   params = "BRANCH=#{branch}"
 
-  if user not in users and '*' not in users
-    msg.send "Access denied."
-    msg.send "Valid users are: #{(u for u in users)}"
-    return
+  if not userHasRole(user, role)
+     msg.send "Access denied."
+     msg.send "You must have this role to use this command: #{role}"
+     return
 
   # monkeypatch the msg.match object
   msg.match[1] = job
