@@ -1,39 +1,32 @@
 {
   "name": "hubot-deploy",
   "description": "Deploy wrapper script for Jenkins CI Hubot script",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "Dan Riti <dmriti@gmail.com>",
   "license": "MIT",
-
   "keywords": [
     "hubot",
     "hubot-scripts",
     "jenkins",
     "deploy"
   ],
-
   "repository": {
     "type": "git",
     "url": "git://github.com/appneta/hubot-deploy.git"
   },
-
   "bugs": {
     "url": "https://github.com/appneta/hubot-deploy/issues"
   },
-
   "dependencies": {
     "coffee-script": "~1.6"
   },
-
   "devDependencies": {
     "mocha": "*",
     "chai": "*",
     "sinon-chai": "*",
     "sinon": "*"
   },
-
   "main": "index.coffee",
-
   "scripts": {
     "test": "script/test"
   }
