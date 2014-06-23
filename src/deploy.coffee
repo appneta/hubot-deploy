@@ -37,7 +37,7 @@ jenkinsDeploy = (msg, robot) ->
 
   environment = querystring.escape msg.match[1]
   branch = querystring.escape msg.match[2]
-  user = querystring.escape msg.message.user.name
+  userName = msg.message.user.name
 
   if environment not of CONFIG
     msg.send "Invalid environment: #{environment}"
@@ -48,7 +48,7 @@ jenkinsDeploy = (msg, robot) ->
   role = CONFIG[environment].role
   params = "BRANCH=#{branch}"
 
-  if not userHasRole(user, role)
+  if not userHasRole(userName, role)
      msg.send "Access denied."
      msg.send "You must have this role to use this command: #{role}"
      return
