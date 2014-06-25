@@ -22,7 +22,7 @@
 
 querystring = require 'querystring'
 
-jenkinsDeploy = (msg, robot) ->
+jenkinsDeploy = (commandType, msg, robot) ->
   CONFIG = JSON.parse process.env.HUBOT_DEPLOY_CONFIG
 
   userHasRole = (user, role) ->
@@ -35,23 +35,33 @@ jenkinsDeploy = (msg, robot) ->
     msg.send "Error: jenkins plugin not installed."
     return
 
-  environment = querystring.escape msg.match[1]
-  branch = querystring.escape msg.match[2]
-  userName = msg.message.user.name
+  switch commandType
+    when 'deploy' then
+      environment = querystring.escape msg.match[1]
+      branch = querystring.escape msg.match[2]
+      userName = msg.message.user.name
 
-  if environment not of CONFIG
-    msg.send "Invalid environment: #{environment}"
-    msg.send "Valid environments are: #{(key for key of CONFIG)}"
-    return
+      if environment not of CONFIG
+        msg.send "Invalid environment: #{environment}"
+        msg.send "Valid environments are: #{(key for key of CONFIG)}"
+        return
 
-  job = CONFIG[environment].job
-  role = CONFIG[environment].role
-  params = "BRANCH=#{branch}"
+      job = CONFIG[environment].job
+      role = CONFIG[environment].role
+      params = "TRACELONS_BRANCH=#{branch}"
 
-  if not userHasRole(userName, role)
-     msg.send "Access denied."
-     msg.send "You must have this role to use this command: #{role}"
-     return
+      if not userHasRole(userName, role)
+         msg.send "Access denied."
+         msg.send "You must have this role to use this command: #{role}"
+         return
+
+    when 'build' then
+      job = querystring.escape msg.match[1]
+      branch = querystring.escape msg.match[2] 
+      params = "TRACELONS_BRANCH=#{branch}"
+
+    else
+      msg.send "Invalid command type for Jenkins deploy helper: #{commandType}"
 
   # monkeypatch the msg.match object
   msg.match[1] = job
@@ -61,4 +71,7 @@ jenkinsDeploy = (msg, robot) ->
 
 module.exports = (robot) ->
   robot.respond /deploy ([\w\.\-_]+) (.+)?/i, (msg) ->
-    jenkinsDeploy(msg, robot)
+    jenkinsDeploy('deploy', msg, robot)
+
+  robot.respond /build ([\w\.\-_]+) (.+)?/i, (msg) ->
+    jenkinsDeploy('build', msg, robot)
