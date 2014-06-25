@@ -21,6 +21,7 @@
 #
 # Commands:
 #   hubot deploy <environment> <branch> - deploys the specified branch to the specified environment
+#   hubot build <job> <param> - builds the specified job with the specified param
 #
 # Author:
 #   danriti
