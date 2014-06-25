@@ -12,7 +12,7 @@
 #   The "role" field uses the [auth.coffee][1] module for restricting access via user
 #   configurable roles. You can set "role" to "*" if you don't care about restricting access.
 #
-#   [1]: https://github.com/github/hubot-scripts/blob/master/src/scripts/auth.coffee
+#   [1]: https://github.com/github/hubot/blob/master/src/scripts/auth.coffee
 #
 # Commands:
 #   hubot deploy <environment> <branch> - deploys the specified branch to the specified environment
@@ -29,7 +29,7 @@ jenkinsDeploy = (msg, robot) ->
     if role is "*"
       return true
 
-    return robot.Auth.hasRole(user, role)
+    return robot.auth.hasRole(user, role)
 
   if not robot.jenkins?.build?
     msg.send "Error: jenkins plugin not installed."
@@ -37,7 +37,7 @@ jenkinsDeploy = (msg, robot) ->
 
   environment = querystring.escape msg.match[1]
   branch = querystring.escape msg.match[2]
-  userName = msg.message.user.name
+  user = msg.message.user
 
   if environment not of CONFIG
     msg.send "Invalid environment: #{environment}"
@@ -48,7 +48,7 @@ jenkinsDeploy = (msg, robot) ->
   role = CONFIG[environment].role
   params = "BRANCH=#{branch}"
 
-  if not userHasRole(userName, role)
+  if not userHasRole(user, role)
      msg.send "Access denied."
      msg.send "You must have this role to use this command: #{role}"
      return
