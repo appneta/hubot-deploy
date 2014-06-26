@@ -14,8 +14,5 @@ describe 'deploy', ->
 
     require('../src/deploy')(@robot)
 
-  it 'registers a deploy listener', ->
-    expect(@robot.respond).to.have.been.calledWith(/deploy foo bar/)
-
-  it 'registers a deploy listener', ->
-    expect(@robot.respond).to.have.been.calledWith(/build foo bar/)
+  it 'registers a deploy/build listener', ->
+    expect(@robot.respond).to.have.been.calledWith(/(deploy|build) ([\w\.\-_]+) (.+)?/i)
