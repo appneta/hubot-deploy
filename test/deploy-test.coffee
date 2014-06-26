@@ -10,7 +10,12 @@ describe 'deploy', ->
       respond: sinon.spy()
       hear: sinon.spy()
 
+    process.env.HUBOT_DEPLOY_CONFIG = '{}'
+
     require('../src/deploy')(@robot)
 
-  it 'registers a respond listener', ->
+  it 'registers a deploy listener', ->
     expect(@robot.respond).to.have.been.calledWith(/deploy foo bar/)
+
+  it 'registers a deploy listener', ->
+    expect(@robot.respond).to.have.been.calledWith(/build foo bar/)
