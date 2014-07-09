@@ -8,8 +8,9 @@
 #
 #   The "job" field represents the name of the Jenkins job you want to invoke.
 #
-#   The "role" field uses the [hubot-auth][1] module for restricting access via user
-#   configurable roles. You can set "role" to "*" if you don't care about restricting access.
+#   The "role" field uses the [hubot-auth][1] module (requires installation) for restricting
+#   access via user configurable roles. You can set "role" to "*" if you don't care about
+#   restricting access.
 #
 #   The "param" field represents the name of the string parameter passed to the Jenkins
 #   job.
@@ -34,7 +35,7 @@ module.exports = (robot) ->
     CONFIG = {}
 
   userHasRole = (user, role) ->
-    if role is "*"
+    if role is "*" or not robot.auth?.hasRole?
       return true
 
     return robot.auth.hasRole(user, role)
