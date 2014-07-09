@@ -25,9 +25,13 @@
 
 querystring = require 'querystring'
 
-CONFIG = JSON.parse process.env.HUBOT_DEPLOY_CONFIG
-
 jenkinsDeploy = (msg, robot) ->
+
+  if process.env.HUBOT_DEPLOY_CONFIG?
+    CONFIG = JSON.parse process.env.HUBOT_DEPLOY_CONFIG
+  else
+    robot.logger.warning 'The HUBOT_DEPLOY_CONFIG environment variable is not set'
+    CONFIG = {}
 
   userHasRole = (user, role) ->
     if role is "*"
