@@ -9,6 +9,8 @@ describe 'deploy', ->
     @robot =
       respond: sinon.spy()
       hear: sinon.spy()
+      logger:
+        warning: sinon.spy()
 
     require('../src/deploy')(@robot)
 
