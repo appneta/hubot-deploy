@@ -33,14 +33,13 @@ module.exports = (robot) ->
     robot.logger.warning 'The HUBOT_DEPLOY_CONFIG environment variable is not set'
     CONFIG = {}
 
+  userHasRole = (user, role) ->
+    if role is "*"
+      return true
+
+    return robot.auth.hasRole(user, role)
+
   jenkinsDeploy = (msg) ->
-
-    userHasRole = (user, role) ->
-      if role is "*"
-        return true
-
-      return robot.auth.hasRole(user, role)
-
     if not robot.jenkins?.build?
       msg.send "Error: jenkins plugin not installed."
       return
