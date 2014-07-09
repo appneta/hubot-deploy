@@ -70,27 +70,32 @@ describe 'auth', ->
   afterEach ->
     robot.shutdown()
 
-  it 'deploy master to staging', (done) ->
+  it 'unrestricted access deploy', (done) ->
     adapter.receive(new TextMessage adminUser, "hubot deploy staging master")
     expect(robot.jenkins.build).to.be.calledOnce
     done()
 
-  it 'deploy master to production', (done) ->
+  it 'restricted access deploy', (done) ->
     adapter.receive(new TextMessage roleUser, "hubot deploy production master")
     expect(robot.jenkins.build).to.be.calledOnce
     done()
 
-  it 'unauthorized deploy to production', (done) ->
+  it 'unsuccessful restricted access deploy', (done) ->
     adapter.receive(new TextMessage adminUser, "hubot deploy production master")
     expect(robot.jenkins.build).to.be.not.called
     done()
 
-  it 'build image', (done) ->
+  it 'unsuccessful deploy of invalid environment', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot deploy blah master")
+    expect(robot.jenkins.build).to.be.not.called
+    done()
+
+  it 'unrestricted access build', (done) ->
     adapter.receive(new TextMessage adminUser, "hubot build image master")
     expect(robot.jenkins.build).to.be.calledOnce
     done()
 
-  it 'hubot-auth module not installed', (done) ->
+  it 'restricted access deploy when hubot-auth is not installed', (done) ->
     robot.auth = null
     adapter.receive(new TextMessage roleUser, "hubot deploy production master")
     expect(robot.jenkins.build).to.be.calledOnce
