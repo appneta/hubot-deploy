@@ -89,3 +89,9 @@ describe 'auth', ->
     adapter.receive(new TextMessage adminUser, "hubot build image master")
     expect(robot.jenkins.build).to.be.calledOnce
     done()
+
+  it 'hubot-auth module not installed', (done) ->
+    robot.auth = null
+    adapter.receive(new TextMessage roleUser, "hubot deploy production master")
+    expect(robot.jenkins.build).to.be.calledOnce
+    done()
