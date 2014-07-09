@@ -1,23 +1,20 @@
 # Description:
 #   Deploy wrapper script for Jenkins CI Hubot script
 #
-# Dependencies:
-#   None
-#
 # Configuration:
-#   HUBOT_DEPLOY_CONFIG
+#   HUBOT_DEPLOY_CONFIG - A JSON string the describes your deploy configuration.
 #
-#   CONFIG should be in JSON i.e. '{ "foo": {"job": "deploy-foo", "role": "deploy", "param": "BRANCH" } }'
+#   i.e. HUBOT_DEPLOY_CONFIG='{ "foo": {"job": "deploy-foo", "role": "deploy", "param": "BRANCH" } }'
 #
 #   The "job" field represents the name of the Jenkins job you want to invoke.
 #
-#   The "role" field uses the [auth.coffee][1] module for restricting access via user
+#   The "role" field uses the [hubot-auth][1] module for restricting access via user
 #   configurable roles. You can set "role" to "*" if you don't care about restricting access.
-#
-#   [1]: https://github.com/github/hubot/blob/master/src/scripts/auth.coffee
 #
 #   The "param" field represents the name of the string parameter passed to the Jenkins
 #   job.
+#
+#   [1]: https://github.com/hubot-scripts/hubot-auth
 #
 # Commands:
 #   hubot deploy <environment> <branch> - deploys the specified branch to the specified environment
