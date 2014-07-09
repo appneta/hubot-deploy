@@ -25,7 +25,7 @@
 
 querystring = require 'querystring'
 
-jenkinsDeploy = (msg, robot) ->
+module.exports = (robot) ->
 
   if process.env.HUBOT_DEPLOY_CONFIG?
     CONFIG = JSON.parse process.env.HUBOT_DEPLOY_CONFIG
@@ -33,41 +33,42 @@ jenkinsDeploy = (msg, robot) ->
     robot.logger.warning 'The HUBOT_DEPLOY_CONFIG environment variable is not set'
     CONFIG = {}
 
-  userHasRole = (user, role) ->
-    if role is "*"
-      return true
+  jenkinsDeploy = (msg) ->
 
-    return robot.auth.hasRole(user, role)
+    userHasRole = (user, role) ->
+      if role is "*"
+        return true
 
-  if not robot.jenkins?.build?
-    msg.send "Error: jenkins plugin not installed."
-    return
+      return robot.auth.hasRole(user, role)
 
-  environment = querystring.escape msg.match[2]
-  branch = querystring.escape msg.match[3]
-  user = msg.envelope.user
+    if not robot.jenkins?.build?
+      msg.send "Error: jenkins plugin not installed."
+      return
 
-  if environment not of CONFIG
-    msg.send "Invalid environment: #{environment}"
-    msg.send "Valid environments are: #{(key for key of CONFIG)}"
-    return
+    environment = querystring.escape msg.match[2]
+    branch = querystring.escape msg.match[3]
+    user = msg.envelope.user
 
-  job = CONFIG[environment].job
-  role = CONFIG[environment].role
-  paramName = CONFIG[environment].param ||= "BRANCH"
-  params = "#{paramName}=#{branch}"
+    if environment not of CONFIG
+      msg.send "Invalid environment: #{environment}"
+      msg.send "Valid environments are: #{(key for key of CONFIG)}"
+      return
 
-  if not userHasRole(user, role)
-     msg.send "Access denied."
-     msg.send "You must have this role to use this command: #{role}"
-     return
+    job = CONFIG[environment].job
+    role = CONFIG[environment].role
+    paramName = CONFIG[environment].param ||= "BRANCH"
+    params = "#{paramName}=#{branch}"
 
-  # monkeypatch the msg.match object
-  msg.match[1] = job
-  msg.match[3] = params
+    if not userHasRole(user, role)
+       msg.send "Access denied."
+       msg.send "You must have this role to use this command: #{role}"
+       return
 
-  robot.jenkins.build(msg)
+    # monkeypatch the msg.match object
+    msg.match[1] = job
+    msg.match[3] = params
 
-module.exports = (robot) ->
+    robot.jenkins.build(msg)
+
   robot.respond /(deploy|build) ([\w\.\-_]+) (.+)?/i, (msg) ->
-    jenkinsDeploy(msg, robot)
+    jenkinsDeploy(msg)
