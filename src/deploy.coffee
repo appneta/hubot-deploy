@@ -44,7 +44,7 @@ jenkinsDeploy = (msg, robot) ->
 
   environment = querystring.escape msg.match[2]
   branch = querystring.escape msg.match[3]
-  user = msg.message.user
+  user = msg.envelope.user
 
   if environment not of CONFIG
     msg.send "Invalid environment: #{environment}"
