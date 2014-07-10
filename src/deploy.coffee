@@ -4,7 +4,19 @@
 # Configuration:
 #   HUBOT_DEPLOY_CONFIG - A JSON string the describes your deploy configuration.
 #
-#   i.e. HUBOT_DEPLOY_CONFIG='{ "foo": {"job": "deploy-foo", "role": "deploy", "param": "BRANCH" } }'
+# Commands:
+#   hubot deploy <environment> <branch> - deploys the specified branch to the specified environment
+#   hubot build <job> <param> - builds the specified job with the specified param
+#
+# Notes:
+#   HUBOT_DEPLOY_CONFIG expects a JSON object structured like this:
+#
+#   { "foo": {
+#       "job": "deploy-foo",
+#       "role": "deploy",
+#       "param": "BRANCH"
+#     }
+#   }
 #
 #   The "job" field represents the name of the Jenkins job you want to invoke.
 #
@@ -16,10 +28,6 @@
 #   job.
 #
 #   [1]: https://github.com/hubot-scripts/hubot-auth
-#
-# Commands:
-#   hubot deploy <environment> <branch> - deploys the specified branch to the specified environment
-#   hubot build <job> <param> - builds the specified job with the specified param
 #
 # Author:
 #   danriti
