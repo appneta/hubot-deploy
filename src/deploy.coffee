@@ -18,14 +18,13 @@
 #     }
 #   }
 #
-#   The "job" field represents the name of the Jenkins job you want to invoke.
+#   - "foo" (String) Name of the environment/job you want to invoke.
+#   - "job" (String) Name of the Jenkins job you want to invoke.
+#   - "param" (String) Name of the string parameter passed to the Jenkins job.
+#   - "role" (String) (Optional) Uses the [hubot-auth][1] module (requires
+#     installation) for restricting access via user configurable roles.
 #
-#   The "role" field uses the [hubot-auth][1] module (requires installation) for restricting
-#   access via user configurable roles. You can set "role" to "*" if you don't care about
-#   restricting access.
-#
-#   The "param" field represents the name of the string parameter passed to the Jenkins
-#   job.
+#     You can set "role" to "*" if you don't care about restricting access.
 #
 #   [1]: https://github.com/hubot-scripts/hubot-auth
 #
