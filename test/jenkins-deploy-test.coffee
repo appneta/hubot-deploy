@@ -24,7 +24,7 @@ CONFIG = """
 }
 """
 
-describe 'auth', ->
+describe 'jenkins-deploy', ->
   robot = {}
   adminUser = {}
   roleUser = {}
