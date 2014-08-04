@@ -20,6 +20,10 @@ CONFIG = """
   "image": {
     "job": "build-image",
     "role": "*"
+  },
+  "release": {
+    "job": "test-release",
+    "role": "*"
   }
 }
 """
@@ -92,6 +96,11 @@ describe 'jenkins-deploy', ->
 
   it 'unrestricted access build', (done) ->
     adapter.receive(new TextMessage adminUser, "hubot build image master")
+    expect(robot.jenkins.build).to.be.calledOnce
+    done()
+
+  it 'unrestricted access test', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot test release rc")
     expect(robot.jenkins.build).to.be.calledOnce
     done()
 
