@@ -46,7 +46,7 @@ describe 'auth', ->
       # load modules and configure it for the robot. This is in place of
       # external-scripts
       require(path.resolve path.join("node_modules/hubot-auth/src"), "auth")(@robot)
-      require('../src/deploy')(@robot)
+      require('../src/jenkins-deploy')(@robot)
 
       adminUser = robot.brain.userForId "1", {
         name: "admin-user"

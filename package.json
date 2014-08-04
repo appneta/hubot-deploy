@@ -1,5 +1,5 @@
 {
-  "name": "hubot-deploy",
+  "name": "hubot-jenkins-deploy",
   "description": "Deploy wrapper script for Jenkins CI Hubot script",
   "version": "1.2.0",
   "author": "Dan Riti <dmriti@gmail.com>",
@@ -12,10 +12,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/appneta/hubot-deploy.git"
+    "url": "git://github.com/appneta/hubot-jenkins-deploy.git"
   },
   "bugs": {
-    "url": "https://github.com/appneta/hubot-deploy/issues"
+    "url": "https://github.com/appneta/hubot-jenkins-deploy/issues"
   },
   "dependencies": {
     "coffee-script": "~1.6"
