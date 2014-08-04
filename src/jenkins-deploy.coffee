@@ -2,25 +2,27 @@
 #   Deploy wrapper script for Jenkins CI Hubot script
 #
 # Configuration:
-#   HUBOT_DEPLOY_CONFIG - A JSON string the describes your deploy configuration.
+#   HUBOT_JENKINS_DEPLOY_CONFIG - A JSON string that describes your deploy configuration.
 #
 # Commands:
-#   hubot deploy <environment> <branch> - deploys the specified branch to the specified environment
-#   hubot build <job> <param> - builds the specified job with the specified param
+#   hubot deploy <job> <params> - deploy the specified job with the specified param(s)
+#   hubot build <job> <params> - build the specified job with the specified param(s)
+#   hubot test <job> <params> - test the specified job with the specified param(s)
 #
 # Notes:
-#   HUBOT_DEPLOY_CONFIG expects a JSON object structured like this:
+#   HUBOT_JENKINS_DEPLOY_CONFIG expects a JSON object structured like this:
 #
 #   { "foo": {
 #       "job": "deploy-foo",
+#       "params": "BRANCH,REGION"
 #       "role": "deploy",
-#       "param": "BRANCH"
 #     }
 #   }
 #
-#   - "foo" (String) Name of the environment/job you want to invoke.
+#   - "foo" (String) Human readable job you want to invoke.
 #   - "job" (String) Name of the Jenkins job you want to invoke.
-#   - "param" (String) Name of the string parameter passed to the Jenkins job.
+#   - "params" (String) Comma seperated string of all the parameter keys to be
+#     passed to the Jenkins job.
 #   - "role" (String) (Optional) Uses the [hubot-auth][1] module (requires
 #     installation) for restricting access via user configurable roles.
 #
@@ -31,14 +33,12 @@
 # Author:
 #   danriti
 
-querystring = require 'querystring'
-
 module.exports = (robot) ->
 
-  if process.env.HUBOT_DEPLOY_CONFIG?
-    CONFIG = JSON.parse process.env.HUBOT_DEPLOY_CONFIG
+  if process.env.HUBOT_JENKINS_DEPLOY_CONFIG?
+    CONFIG = JSON.parse process.env.HUBOT_JENKINS_DEPLOY_CONFIG
   else
-    robot.logger.warning 'The HUBOT_DEPLOY_CONFIG environment variable is not set'
+    robot.logger.warning 'The HUBOT_JENKINS_DEPLOY_CONFIG environment variable is not set'
     CONFIG = {}
 
   userHasRole = (user, role) ->
@@ -52,8 +52,8 @@ module.exports = (robot) ->
       msg.send "Error: jenkins plugin not installed."
       return
 
-    environment = querystring.escape msg.match[2]
-    branch = querystring.escape msg.match[3]
+    environment = msg.match[2]
+    paramValues = msg.match[3].split(',')
     user = msg.envelope.user
 
     if environment not of CONFIG
@@ -63,13 +63,24 @@ module.exports = (robot) ->
 
     job = CONFIG[environment].job
     role = CONFIG[environment].role
-    paramName = CONFIG[environment].param ||= "BRANCH"
-    params = "#{paramName}=#{branch}"
+    paramKeys = CONFIG[environment].params ||= "BRANCH"
+    paramKeys = paramKeys.split(',')
 
     if not userHasRole(user, role)
        msg.send "Access denied."
        msg.send "You must have this role to use this command: #{role}"
        return
+
+    if paramKeys.length isnt paramValues.length
+      msg.send 'Invalid parameters.'
+      msg.send "Valid parameters are: #{(key for key of paramKeys)}"
+
+    count = paramKeys.length - 1
+    params = ''
+    for i in [0..count]
+      params += "#{paramKeys[i]}=#{paramValues[i]}"
+      if i isnt count
+        params += ','
 
     # monkeypatch the msg.match object
     msg.match[1] = job
@@ -77,5 +88,5 @@ module.exports = (robot) ->
 
     robot.jenkins.build(msg)
 
-  robot.respond /(deploy|build) ([\w\.\-_]+) (.+)?/i, (msg) ->
+  robot.respond /(deploy|build|test) ([\w\.\-_]+) (.+)?/i, (msg) ->
     jenkinsDeploy(msg)
