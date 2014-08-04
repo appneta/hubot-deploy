@@ -24,6 +24,16 @@ CONFIG = """
   "release": {
     "job": "test-release",
     "role": "*"
+  },
+  "ami-simple": {
+    "job": "build-ami-simple",
+    "role": "*",
+    "params": "ONE"
+  },
+  "ami-complex": {
+    "job": "build-ami-complex",
+    "role": "*",
+    "params": "ONE,TWO,THREE"
   }
 }
 """
@@ -37,7 +47,7 @@ describe 'jenkins-deploy', ->
   beforeEach (done) ->
     # Fake environment variables
     process.env.HUBOT_AUTH_ADMIN = "1"
-    process.env.HUBOT_DEPLOY_CONFIG = CONFIG
+    process.env.HUBOT_JENKINS_DEPLOY_CONFIG = CONFIG
 
     # Create new robot, without http, using mock adapter
     robot = new Robot null, "mock-adapter", false
@@ -77,6 +87,8 @@ describe 'jenkins-deploy', ->
   it 'unrestricted access deploy', (done) ->
     adapter.receive(new TextMessage adminUser, "hubot deploy staging master")
     expect(robot.jenkins.build).to.be.calledOnce
+    params = robot.jenkins.build.args[0][0].match[3]
+    expect(params).to.equal('BRANCH=master')
     done()
 
   it 'restricted access deploy', (done) ->
@@ -102,6 +114,20 @@ describe 'jenkins-deploy', ->
   it 'unrestricted access test', (done) ->
     adapter.receive(new TextMessage adminUser, "hubot test release rc")
     expect(robot.jenkins.build).to.be.calledOnce
+    done()
+
+  it 'unrestricted access single parameter', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot build ami-simple one")
+    expect(robot.jenkins.build).to.be.calledOnce
+    params = robot.jenkins.build.args[0][0].match[3]
+    expect(params).to.equal('ONE=one')
+    done()
+
+  it 'unrestricted access multiple parameters', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot build ami-complex one,two,three")
+    expect(robot.jenkins.build).to.be.calledOnce
+    params = robot.jenkins.build.args[0][0].match[3]
+    expect(params).to.equal('ONE=one,TWO=two,THREE=three')
     done()
 
   it 'restricted access deploy when hubot-auth is not installed', (done) ->
