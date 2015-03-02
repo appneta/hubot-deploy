@@ -80,7 +80,7 @@ module.exports = (robot) ->
     for i in [0..count]
       params += "#{paramKeys[i]}=#{paramValues[i]}"
       if i isnt count
-        params += ','
+        params += '&'
 
     # monkeypatch the msg.match object
     msg.match[1] = job
