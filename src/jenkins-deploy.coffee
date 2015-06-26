@@ -88,5 +88,5 @@ module.exports = (robot) ->
 
     robot.jenkins.build(msg)
 
-  robot.respond /(deploy|build|test) ([\w\.\-_]+) (.+)?/i, (msg) ->
+  robot.respond /(deploy|build|test)\s+([\w\.\-_]+)\s+(.+)?/i, (msg) ->
     jenkinsDeploy(msg)
