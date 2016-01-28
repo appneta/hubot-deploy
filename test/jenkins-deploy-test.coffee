@@ -35,12 +35,25 @@ CONFIG = """
     "role": "*",
     "params": "ONE,TWO,THREE"
   },
+  "worker": {
+    "job": "deploy-worker",
+    "role": "*",
+    "params": "BRANCH,WORKER"
+  },
   "alertworker": {
     "job": "deploy-worker",
     "role": "*",
     "params": {
       "BRANCH": "prod",
       "WORKER": "alertworker"
+    }
+  },
+  "multiworker": {
+    "job": "deploy-worker",
+    "role": "*",
+    "params": {
+      "BRANCH": "prod",
+      "HOSTS": "host2,host3"
     }
   }
 }
@@ -156,4 +169,18 @@ describe 'jenkins-deploy', ->
     expect(robot.jenkins.build).to.be.calledOnce
     params = robot.jenkins.build.args[0][0].match[3]
     expect(params).to.equal('BRANCH=prod&WORKER=alertworker')
+    done()
+
+  it 'unrestricted access more defaulted parameters', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot deploy multiworker prod")
+    expect(robot.jenkins.build).to.be.calledOnce
+    params = robot.jenkins.build.args[0][0].match[3]
+    expect(params).to.equal('BRANCH=prod&HOSTS=host2,host3')
+    done()
+
+  it 'unrestricted access space and comma seperation', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot deploy worker prod host1,host4")
+    expect(robot.jenkins.build).to.be.calledOnce
+    params = robot.jenkins.build.args[0][0].match[3]
+    expect(params).to.equal('BRANCH=prod&WORKER=host1,host4')
     done()

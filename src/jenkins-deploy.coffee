@@ -47,7 +47,7 @@ module.exports = (robot) ->
 
     return robot.auth.hasRole(user, role)
 
-  parseParamsValues = (params) ->
+  parseUserParams = (params) ->
     if ' ' in params
       return params.split(' ')
     return params.split(',')
@@ -65,7 +65,7 @@ module.exports = (robot) ->
       return
 
     environment = msg.match[2]
-    paramValues = parseParamsValues(msg.match[3])
+    userValues = parseUserParams(msg.match[3])
     user = msg.envelope.user
 
     if environment not of CONFIG
@@ -83,7 +83,7 @@ module.exports = (robot) ->
        msg.send "You must have this role to use this command: #{role}"
        return
 
-    if paramKeys.length isnt paramValues.length
+    if paramKeys.length isnt userValues.length
       msg.send 'Invalid parameters.'
       msg.send "Valid parameters are: #{(key for key of paramKeys)}"
 
@@ -91,7 +91,7 @@ module.exports = (robot) ->
     params = ''
     for i in [0..count]
       key = paramKeys[i]
-      value = paramValues[i] || defaultValues[key]
+      value = userValues[i] || defaultValues[key]
       params += "#{key}=#{value}"
       if i isnt count
         params += '&'
