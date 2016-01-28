@@ -47,13 +47,18 @@ module.exports = (robot) ->
 
     return robot.auth.hasRole(user, role)
 
+  parseParamsValues = (params) ->
+    if ' ' in params
+      return params.split(' ')
+    return params.split(',')
+
   jenkinsDeploy = (msg) ->
     if not robot.jenkins?.build?
       msg.send "Error: jenkins plugin not installed."
       return
 
     environment = msg.match[2]
-    paramValues = msg.match[3].split(',')
+    paramValues = parseParamsValues(msg.match[3])
     user = msg.envelope.user
 
     if environment not of CONFIG
