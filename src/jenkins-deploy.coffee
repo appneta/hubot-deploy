@@ -52,6 +52,13 @@ module.exports = (robot) ->
       return params.split(' ')
     return params.split(',')
 
+  parseParamKeys = (params) ->
+    if typeof params is 'object'
+      return Object.keys(params)
+    if not params
+      params = "BRANCH"
+    return params.split(',')
+
   jenkinsDeploy = (msg) ->
     if not robot.jenkins?.build?
       msg.send "Error: jenkins plugin not installed."
@@ -68,8 +75,8 @@ module.exports = (robot) ->
 
     job = CONFIG[environment].job
     role = CONFIG[environment].role
-    paramKeys = CONFIG[environment].params ||= "BRANCH"
-    paramKeys = paramKeys.split(',')
+    paramKeys = parseParamKeys(CONFIG[environment].params)
+    defaultValues = CONFIG[environment].params
 
     if not userHasRole(user, role)
        msg.send "Access denied."
@@ -83,7 +90,9 @@ module.exports = (robot) ->
     count = paramKeys.length - 1
     params = ''
     for i in [0..count]
-      params += "#{paramKeys[i]}=#{paramValues[i]}"
+      key = paramKeys[i]
+      value = paramValues[i] || defaultValues[key]
+      params += "#{key}=#{value}"
       if i isnt count
         params += '&'
 

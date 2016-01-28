@@ -34,6 +34,14 @@ CONFIG = """
     "job": "build-ami-complex",
     "role": "*",
     "params": "ONE,TWO,THREE"
+  },
+  "alertworker": {
+    "job": "deploy-worker",
+    "role": "*",
+    "params": {
+      "BRANCH": "prod",
+      "WORKER": "alertworker"
+    }
   }
 }
 """
@@ -141,4 +149,11 @@ describe 'jenkins-deploy', ->
     expect(robot.jenkins.build).to.be.calledOnce
     params = robot.jenkins.build.args[0][0].match[3]
     expect(params).to.equal('ONE=one&TWO=two&THREE=three')
+    done()
+
+  it 'unrestricted access defaulted parameters', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot deploy alertworker prod")
+    expect(robot.jenkins.build).to.be.calledOnce
+    params = robot.jenkins.build.args[0][0].match[3]
+    expect(params).to.equal('BRANCH=prod&WORKER=alertworker')
     done()
