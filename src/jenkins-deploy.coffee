@@ -14,15 +14,26 @@
 #
 #   { "foo": {
 #       "job": "deploy-foo",
-#       "params": "BRANCH,REGION"
 #       "role": "deploy",
+#       "params": "BRANCH,REGION"
+#     },
+#     "bar": {
+#       "job": "deploy-foo",
+#       "role": "*",
+#       "params": {
+#         "BRANCH": "master",
+#         "HOSTS": "host1,host2"
+#       }
 #     }
 #   }
 #
 #   - "foo" (String) Human readable job you want to invoke.
 #   - "job" (String) Name of the Jenkins job you want to invoke.
-#   - "params" (String) Comma seperated string of all the parameter keys to be
-#     passed to the Jenkins job.
+#   - "params"
+#       - (String) Comma seperated string of all the parameter keys
+#         to be passed to the Jenkins job.
+#       - (Object) Object containing keys of the expected parameters with
+#         defaulted values to be passed to the Jenkins job.
 #   - "role" (String) (Optional) Uses the [hubot-auth][1] module (requires
 #     installation) for restricting access via user configurable roles.
 #
