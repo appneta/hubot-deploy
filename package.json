@@ -1,7 +1,7 @@
 {
   "name": "hubot-jenkins-deploy",
   "description": "Deploy wrapper script for Jenkins CI Hubot script",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "author": "Dan Riti <dmriti@gmail.com>",
   "license": "MIT",
   "keywords": [
