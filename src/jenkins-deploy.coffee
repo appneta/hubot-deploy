@@ -94,10 +94,6 @@ module.exports = (robot) ->
        msg.send "You must have this role to use this command: #{role}"
        return
 
-    if paramKeys.length isnt userValues.length
-      msg.send 'Invalid parameters.'
-      msg.send "Valid parameters are: #{(key for key of paramKeys)}"
-
     count = paramKeys.length - 1
     params = ''
     for i in [0..count]
