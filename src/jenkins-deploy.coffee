@@ -14,15 +14,26 @@
 #
 #   { "foo": {
 #       "job": "deploy-foo",
-#       "params": "BRANCH,REGION"
 #       "role": "deploy",
+#       "params": "BRANCH,REGION"
+#     },
+#     "bar": {
+#       "job": "deploy-foo",
+#       "role": "*",
+#       "params": {
+#         "BRANCH": "master",
+#         "HOSTS": "host1,host2"
+#       }
 #     }
 #   }
 #
 #   - "foo" (String) Human readable job you want to invoke.
 #   - "job" (String) Name of the Jenkins job you want to invoke.
-#   - "params" (String) Comma seperated string of all the parameter keys to be
-#     passed to the Jenkins job.
+#   - "params"
+#       - (String) Comma seperated string of all the parameter keys
+#         to be passed to the Jenkins job.
+#       - (Object) Object containing keys of the expected parameters with
+#         defaulted values to be passed to the Jenkins job.
 #   - "role" (String) (Optional) Uses the [hubot-auth][1] module (requires
 #     installation) for restricting access via user configurable roles.
 #
@@ -47,13 +58,25 @@ module.exports = (robot) ->
 
     return robot.auth.hasRole(user, role)
 
+  parseUserParams = (params) ->
+    if ' ' in params
+      return params.split(' ')
+    return params.split(',')
+
+  parseParamKeys = (params) ->
+    if typeof params is 'object'
+      return Object.keys(params)
+    if not params
+      params = "BRANCH"
+    return params.split(',')
+
   jenkinsDeploy = (msg) ->
     if not robot.jenkins?.build?
       msg.send "Error: jenkins plugin not installed."
       return
 
     environment = msg.match[2]
-    paramValues = msg.match[3].split(',')
+    userValues = parseUserParams(msg.match[3])
     user = msg.envelope.user
 
     if environment not of CONFIG
@@ -63,22 +86,24 @@ module.exports = (robot) ->
 
     job = CONFIG[environment].job
     role = CONFIG[environment].role
-    paramKeys = CONFIG[environment].params ||= "BRANCH"
-    paramKeys = paramKeys.split(',')
+    paramKeys = parseParamKeys(CONFIG[environment].params)
+    defaultValues = CONFIG[environment].params
 
     if not userHasRole(user, role)
        msg.send "Access denied."
        msg.send "You must have this role to use this command: #{role}"
        return
 
-    if paramKeys.length isnt paramValues.length
+    if paramKeys.length isnt userValues.length
       msg.send 'Invalid parameters.'
       msg.send "Valid parameters are: #{(key for key of paramKeys)}"
 
     count = paramKeys.length - 1
     params = ''
     for i in [0..count]
-      params += "#{paramKeys[i]}=#{paramValues[i]}"
+      key = paramKeys[i]
+      value = userValues[i] || defaultValues[key]
+      params += "#{key}=#{value}"
       if i isnt count
         params += '&'
 

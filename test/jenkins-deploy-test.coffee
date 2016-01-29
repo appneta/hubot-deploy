@@ -34,6 +34,27 @@ CONFIG = """
     "job": "build-ami-complex",
     "role": "*",
     "params": "ONE,TWO,THREE"
+  },
+  "worker": {
+    "job": "deploy-worker",
+    "role": "*",
+    "params": "BRANCH,WORKER"
+  },
+  "alertworker": {
+    "job": "deploy-worker",
+    "role": "*",
+    "params": {
+      "BRANCH": "prod",
+      "WORKER": "alertworker"
+    }
+  },
+  "multiworker": {
+    "job": "deploy-worker",
+    "role": "*",
+    "params": {
+      "BRANCH": "prod",
+      "HOSTS": "host2,host3"
+    }
   }
 }
 """
@@ -134,4 +155,32 @@ describe 'jenkins-deploy', ->
     robot.auth = null
     adapter.receive(new TextMessage roleUser, "hubot deploy production master")
     expect(robot.jenkins.build).to.be.calledOnce
+    done()
+
+  it 'unrestricted access multiple parameters space seperated', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot deploy ami-complex one two three")
+    expect(robot.jenkins.build).to.be.calledOnce
+    params = robot.jenkins.build.args[0][0].match[3]
+    expect(params).to.equal('ONE=one&TWO=two&THREE=three')
+    done()
+
+  it 'unrestricted access defaulted parameters', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot deploy alertworker prod")
+    expect(robot.jenkins.build).to.be.calledOnce
+    params = robot.jenkins.build.args[0][0].match[3]
+    expect(params).to.equal('BRANCH=prod&WORKER=alertworker')
+    done()
+
+  it 'unrestricted access more defaulted parameters', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot deploy multiworker prod")
+    expect(robot.jenkins.build).to.be.calledOnce
+    params = robot.jenkins.build.args[0][0].match[3]
+    expect(params).to.equal('BRANCH=prod&HOSTS=host2,host3')
+    done()
+
+  it 'unrestricted access space and comma seperation', (done) ->
+    adapter.receive(new TextMessage adminUser, "hubot deploy worker prod host1,host4")
+    expect(robot.jenkins.build).to.be.calledOnce
+    params = robot.jenkins.build.args[0][0].match[3]
+    expect(params).to.equal('BRANCH=prod&WORKER=host1,host4')
     done()
