@@ -21,13 +21,13 @@
     "coffee-script": "~1.6"
   },
   "devDependencies": {
-    "hubot-auth": "~1.1.2",
-    "mocha": "*",
-    "chai": "*",
-    "sinon-chai": "*",
-    "sinon": "*",
-    "hubot": "^2.7.5",
-    "hubot-mock-adapter": "^1.0.0"
+    "hubot-auth": "1.1.2",
+    "mocha": "1.21.3",
+    "chai": "1.9.1",
+    "sinon-chai": "2.5.0",
+    "sinon": "1.10.3",
+    "hubot": "2.8.0",
+    "hubot-mock-adapter": "1.0.0"
   },
   "main": "index.coffee",
   "scripts": {
