@@ -1,0 +1,49 @@
+{
+  "staging": {
+    "job": "deploy-staging",
+    "role": "*"
+  },
+  "production": {
+    "job": "deploy-production",
+    "role": "deploy"
+  },
+  "image": {
+    "job": "build-image",
+    "role": "*"
+  },
+  "release": {
+    "job": "test-release",
+    "role": "*"
+  },
+  "ami-simple": {
+    "job": "build-ami-simple",
+    "role": "*",
+    "params": "ONE"
+  },
+  "ami-complex": {
+    "job": "build-ami-complex",
+    "role": "*",
+    "params": "ONE,TWO,THREE"
+  },
+  "worker": {
+    "job": "deploy-worker",
+    "role": "*",
+    "params": "BRANCH,WORKER"
+  },
+  "alertworker": {
+    "job": "deploy-worker",
+    "role": "*",
+    "params": {
+      "BRANCH": "prod",
+      "WORKER": "alertworker"
+    }
+  },
+  "multiworker": {
+    "job": "deploy-worker",
+    "role": "*",
+    "params": {
+      "BRANCH": "prod",
+      "HOSTS": "host2,host3"
+    }
+  }
+}

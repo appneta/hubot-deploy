@@ -7,57 +7,6 @@ path   = require 'path'
 Robot       = require 'hubot/src/robot'
 TextMessage = require('hubot/src/message').TextMessage
 
-CONFIG = """
-{
-  "staging": {
-    "job": "deploy-staging",
-    "role": "*"
-  },
-  "production": {
-    "job": "deploy-production",
-    "role": "deploy"
-  },
-  "image": {
-    "job": "build-image",
-    "role": "*"
-  },
-  "release": {
-    "job": "test-release",
-    "role": "*"
-  },
-  "ami-simple": {
-    "job": "build-ami-simple",
-    "role": "*",
-    "params": "ONE"
-  },
-  "ami-complex": {
-    "job": "build-ami-complex",
-    "role": "*",
-    "params": "ONE,TWO,THREE"
-  },
-  "worker": {
-    "job": "deploy-worker",
-    "role": "*",
-    "params": "BRANCH,WORKER"
-  },
-  "alertworker": {
-    "job": "deploy-worker",
-    "role": "*",
-    "params": {
-      "BRANCH": "prod",
-      "WORKER": "alertworker"
-    }
-  },
-  "multiworker": {
-    "job": "deploy-worker",
-    "role": "*",
-    "params": {
-      "BRANCH": "prod",
-      "HOSTS": "host2,host3"
-    }
-  }
-}
-"""
 
 describe 'jenkins-deploy', ->
   robot = {}
@@ -68,7 +17,7 @@ describe 'jenkins-deploy', ->
   beforeEach (done) ->
     # Fake environment variables
     process.env.HUBOT_AUTH_ADMIN = "1"
-    process.env.HUBOT_JENKINS_DEPLOY_CONFIG = CONFIG
+    process.env.HUBOT_JENKINS_DEPLOY_CONFIG = "./test/config.json"
 
     # Create new robot, without http, using mock adapter
     robot = new Robot null, "mock-adapter", false
