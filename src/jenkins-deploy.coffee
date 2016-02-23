@@ -2,7 +2,7 @@
 #   Deploy wrapper script for Jenkins CI Hubot script
 #
 # Configuration:
-#   HUBOT_JENKINS_DEPLOY_CONFIG - A JSON string that describes your deploy configuration.
+#   HUBOT_JENKINS_DEPLOY_CONFIG - Path to a JSON file that describes your deploy configuration (see below).
 #
 # Commands:
 #   hubot deploy <job> <params> - deploy the specified job with the specified param(s)
@@ -10,9 +10,10 @@
 #   hubot test <job> <params> - test the specified job with the specified param(s)
 #
 # Notes:
-#   HUBOT_JENKINS_DEPLOY_CONFIG expects a JSON object structured like this:
+#   HUBOT_JENKINS_DEPLOY_CONFIG expects a valid JSON file that contains a JSON object structured like this:
 #
-#   { "foo": {
+#   {
+#     "foo": {
 #       "job": "deploy-foo",
 #       "role": "deploy",
 #       "params": "BRANCH,REGION"
@@ -44,10 +45,12 @@
 # Author:
 #   danriti
 
+fs = require 'fs'
+
 module.exports = (robot) ->
 
   if process.env.HUBOT_JENKINS_DEPLOY_CONFIG?
-    CONFIG = JSON.parse process.env.HUBOT_JENKINS_DEPLOY_CONFIG
+    CONFIG = JSON.parse(fs.readFileSync(process.env.HUBOT_JENKINS_DEPLOY_CONFIG, 'utf8'))
   else
     robot.logger.warning 'The HUBOT_JENKINS_DEPLOY_CONFIG environment variable is not set'
     CONFIG = {}
