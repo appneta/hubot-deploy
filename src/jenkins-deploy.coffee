@@ -63,7 +63,7 @@ module.exports = (robot) ->
 
   parseUserParams = (params) ->
     if ' ' in params
-      return params.split(' ')
+      return params.split(/\s+/)
     return params.split(',')
 
   parseParamKeys = (params) ->

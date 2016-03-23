@@ -107,7 +107,7 @@ describe 'jenkins-deploy', ->
     done()
 
   it 'unrestricted access multiple parameters space seperated', (done) ->
-    adapter.receive(new TextMessage adminUser, "hubot deploy ami-complex one two three")
+    adapter.receive(new TextMessage adminUser, "hubot deploy ami-complex one    two  three")
     expect(robot.jenkins.build).to.be.calledOnce
     params = robot.jenkins.build.args[0][0].match[3]
     expect(params).to.equal('ONE=one&TWO=two&THREE=three')
